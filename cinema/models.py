@@ -39,19 +39,20 @@ class Actor(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 
+def movie_image_path(movie: "Movie", filename: str) -> pathlib.Path:
+    filename = pathlib.Path(
+        f"{slugify(movie.title)}-{uuid.uuid4()}"
+        + pathlib.Path(filename).suffix
+    )
+    return pathlib.Path("movies/") / filename
+
+
 class Movie(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     duration = models.IntegerField()
     genres = models.ManyToManyField(Genre)
     actors = models.ManyToManyField(Actor)
-
-    def movie_image_path(self: "Movie", filename: str) -> pathlib.Path:
-        filename = pathlib.Path(
-            f"{slugify(self.title)}-{uuid.uuid4()}"
-            + pathlib.Path(filename).suffix
-        )
-        return pathlib.Path("movies/") / filename
 
     image = models.ImageField(null=True, upload_to=movie_image_path)
 
